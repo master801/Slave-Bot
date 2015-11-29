@@ -1,0 +1,2 @@
+# Slave-Bot
+Pircbot
