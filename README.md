@@ -1,2 +1,2 @@
 # Slave-Bot
-Pircbot
+PircBot
