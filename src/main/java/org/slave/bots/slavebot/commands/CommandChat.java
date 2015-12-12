@@ -32,6 +32,8 @@ public final class CommandChat implements Command {
 
     @Override
     public void doCommand(PircBot instance, String channel, String sender, String login, String hostname, String[] parameters) {
+        if (channel == null || sender == null || login == null || hostname == null) return;
+
         for(User user : instance.getUsers(channel)) {
             if (user.isOp() && user.getNick().equals(sender)) {
                 if (!ArrayHelper.isNullOrEmpty(parameters)) {

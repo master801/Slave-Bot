@@ -31,6 +31,7 @@ public final class CommandJoinChannel implements Command {
 
     @Override
     public void doCommand(PircBot instance, final String channel, final String sender, final String login, final String hostname, final String[] parameters) {
+        if (channel == null || sender == null || login == null || hostname == null) return;
         for(User user : instance.getUsers(channel)) {
             if (user.getNick().equals(sender) && user.isOp()) {
                 String channelName, channelKey;

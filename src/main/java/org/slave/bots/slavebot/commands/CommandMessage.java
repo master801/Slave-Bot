@@ -33,6 +33,9 @@ public final class CommandMessage implements Command {
 
     @Override
     public void doCommand(PircBot instance, final String channel, final String sender, final String login, final String hostname, final String[] parameters) {
+        if (channel == null || sender == null || login == null || hostname == null) {
+            return;
+        }
         if (sender.equals(SlaveBot.getOwnerName()) && login.equals("~" + SlaveBot.getOwnerName())) {
             if (!ArrayHelper.isNullOrEmpty(parameters) && parameters.length >= 2) {
                 String[] newParameters = new String[parameters.length - 1];
@@ -42,12 +45,14 @@ public final class CommandMessage implements Command {
             } else {
                 instance.sendMessage(channel, (sender + ": ") + "Found no user to message to, or no message at all!");
             }
+        } else {
+            instance.sendMessage(channel, (sender + ": ") + "Only my owner may use this command!");
         }
     }
 
     @Override
     public String getUsage() {
-        return "Use \"!${COMMAND_NAME} SOMEONE A_MESSAGE\" to message a user. Only my owner may use this command.";
+        return "Use \"!${COMMAND_NAME} SOMEONE A_MESSAGE\" to message a user in the channel. Use \"!${COMMAND_NAME} CHANNEL SOMEONE A_MESSAGE\" to message a user in the specified channel. Only my owner may use this command.";
     }
 
 }

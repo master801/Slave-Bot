@@ -4,7 +4,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.slave.bots.slavebot.resources.Channel;
 import org.slave.bots.slavebot.resources.Server;
 
 import java.io.*;
@@ -30,8 +29,7 @@ public final class ServerHandler {
         if (!ServerHandler.SERVER_JSON_FILE.exists()) {
             SlaveBot.SLAVE_BOT_LOGGER.warn("Found no \"{}\" file. Creating a dummy one...", ServerHandler.SERVER_JSON_FILE.getName());
             SlaveBot.SLAVE_BOT_LOGGER.info("Please edit the file to suit your needs.");
-            server = null;
-            save();
+            createDefault();
             System.exit(1);
             return;
         }
@@ -54,7 +52,11 @@ public final class ServerHandler {
             JSONArray channels = (JSONArray)serverJSON.get("channels");
             for(Object channelObject : channels) {
                 JSONObject channel = (JSONObject)channelObject;
-                server.addChannel((String)channel.get("name"), (String)channel.get("password"));
+
+                String channelName = (String)channel.get("name");
+                String channelPassword = (String)channel.get("password");
+                if (!channelName.startsWith("#")) channelName = "#" + channelName;
+                server.addChannel(channelName, channelPassword);
             }
         }
 
@@ -63,44 +65,24 @@ public final class ServerHandler {
     }
 
     @SuppressWarnings("unchecked")
-    public void save() throws IOException {
-        if (server == null) {
-            JSONObject serverJSON = new JSONObject();
-            serverJSON.put("name", "");
-            serverJSON.put("port", 0);
-            serverJSON.put("password", "");
-
-            JSONArray channels = new JSONArray();
-
-            JSONObject dummyChannel1 = new JSONObject();
-            dummyChannel1.put("name", "#dummy_channel_1");
-            dummyChannel1.put("password", "");
-            channels.add(dummyChannel1);
-
-            JSONObject dummyChannel2 = new JSONObject();
-            dummyChannel2.put("name", "#dummy_channel_2");
-            dummyChannel2.put("password", "");
-            channels.add(dummyChannel2);
-
-            serverJSON.put("channels", channels);
-
-            FileWriter fileWriter = new FileWriter(ServerHandler.SERVER_JSON_FILE);
-            serverJSON.writeJSONString(fileWriter);
-            fileWriter.close();
-            return;
-        }
+    private void createDefault() throws IOException {
         JSONObject serverJSON = new JSONObject();
+        serverJSON.put("name", "");
+        serverJSON.put("port", 0);
+        serverJSON.put("password", "");
+
         JSONArray channels = new JSONArray();
 
-        serverJSON.put("name", server.getName());
-        serverJSON.put("password", server.getPassword());
-        serverJSON.put("port", server.getPort());
-        for(Channel channel : server.getChannels()) {
-            JSONObject channelJSON = new JSONObject();
-            channelJSON.put("name", channel.getName());
-            channelJSON.put("password", channel.getPassword());
-            channels.add(channelJSON);
-        }
+        JSONObject dummyChannel1 = new JSONObject();
+        dummyChannel1.put("name", "#dummy_channel_1");
+        dummyChannel1.put("password", "");
+        channels.add(dummyChannel1);
+
+        JSONObject dummyChannel2 = new JSONObject();
+        dummyChannel2.put("name", "#dummy_channel_2");
+        dummyChannel2.put("password", "");
+        channels.add(dummyChannel2);
+
         serverJSON.put("channels", channels);
 
         FileWriter fileWriter = new FileWriter(ServerHandler.SERVER_JSON_FILE);
