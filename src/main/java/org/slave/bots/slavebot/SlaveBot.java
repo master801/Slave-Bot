@@ -31,7 +31,8 @@ public final class SlaveBot extends PircBot {
                 CommandJoinChannel.INSTANCE,
                 CommandPartChannel.INSTANCE,
                 CommandChat.INSTANCE,
-                CommandMessage.INSTANCE
+                CommandMessage.INSTANCE,
+                CommandMail.INSTANCE
         };
     }
 
@@ -94,7 +95,7 @@ public final class SlaveBot extends PircBot {
             messageToSend = String.format((sender != null ? (sender + ": ") : "") + Colors.DARK_BLUE + "Commands: \"%s\"", commandsString);
         }
         if (recipient != null && messageToSend != null) {//Console sent command
-            SlaveBot.SLAVE_BOT_LOGGER.info(messageToSend);
+            sendMessage(recipient, messageToSend);
             return;
         }
 

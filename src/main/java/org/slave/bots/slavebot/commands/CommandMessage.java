@@ -33,9 +33,8 @@ public final class CommandMessage implements Command {
 
     @Override
     public void doCommand(PircBot instance, final String channel, final String sender, final String login, final String hostname, final String[] parameters) {
-        if (channel == null || sender == null || login == null || hostname == null) {
-            return;
-        }
+        if (channel == null || sender == null || login == null || hostname == null) return;
+
         if (sender.equals(SlaveBot.getOwnerName()) && login.equals("~" + SlaveBot.getOwnerName())) {
             if (!ArrayHelper.isNullOrEmpty(parameters) && parameters.length >= 2) {
                 String[] newParameters = new String[parameters.length - 1];

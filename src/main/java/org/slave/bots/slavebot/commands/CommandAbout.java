@@ -36,7 +36,7 @@ public final class CommandAbout implements Command {
             SlaveBot.SLAVE_BOT_LOGGER.info(description);
             return;
         }
-        instance.sendMessage(channel, sender + ": " + Colors.BLUE + description);
+        instance.sendMessage(channel, (sender + ": ") + Colors.BLUE + description);
     }
 
     @Override

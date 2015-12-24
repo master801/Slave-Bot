@@ -2,7 +2,6 @@ package org.slave.bots.slavebot;
 
 import org.jibble.pircbot.IrcException;
 import org.slave.bots.slavebot.resources.Channel;
-import org.slave.bots.slavebot.threads.ThreadConsoleInput;
 import org.slave.lib.helpers.ArrayHelper;
 import org.slave.lib.helpers.StringHelper;
 
@@ -55,7 +54,6 @@ public final class Main {
         } else {
             SlaveBot.SLAVE_BOT_LOGGER.warn("Found no channels to connect to!");
         }
-        new ThreadConsoleInput(slaveBot).start();
     }
 
 }
