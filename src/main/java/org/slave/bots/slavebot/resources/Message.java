@@ -22,18 +22,30 @@ public final class Message implements Serializable, Copyable<Message> {
         this.message = message;
     }
 
+    /**
+     * @return The UUID of the message (this is used for deleting messages)
+     */
     public String getUUID() {
         return uuid;
     }
 
+    /**
+     * @return The name of the person who sent the message
+     */
     public String getSender() {
         return sender;
     }
 
+    /**
+     * @return The name of the person who the message was sent to
+     */
     public String getRecipient() {
         return recipient;
     }
 
+    /**
+     * @return The message
+     */
     public String getMessage() {
         return message;
     }

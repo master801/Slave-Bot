@@ -3,6 +3,8 @@ package org.slave.bots.slavebot.commands;
 import org.jibble.pircbot.PircBot;
 import org.jibble.pircbot.User;
 import org.slave.bots.slavebot.api.Command;
+import org.slave.bots.slavebot.api.CommandException;
+import org.slave.bots.slavebot.api.SubCommand;
 import org.slave.lib.helpers.StringHelper;
 
 /**
@@ -25,12 +27,18 @@ public final class CommandJoinChannel implements Command {
     }
 
     @Override
-    public boolean isCommandNameCaseSensitive() {
+    public SubCommand[] getSubCommands() {
+        return null;
+    }
+
+
+    @Override
+    public boolean isNameCaseSensitive() {
         return false;
     }
 
     @Override
-    public void doCommand(PircBot instance, final String channel, final String sender, final String login, final String hostname, final String[] parameters) {
+    public void doCommand(PircBot instance, final String channel, final String sender, final String login, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
         if (channel == null || sender == null || login == null || hostname == null) return;
         for(User user : instance.getUsers(channel)) {
             if (user.getNick().equals(sender) && user.isOp()) {

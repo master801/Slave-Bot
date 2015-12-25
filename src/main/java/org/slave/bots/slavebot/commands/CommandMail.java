@@ -4,6 +4,8 @@ import com.google.common.base.Joiner;
 import org.jibble.pircbot.PircBot;
 import org.slave.bots.slavebot.SlaveBot;
 import org.slave.bots.slavebot.api.Command;
+import org.slave.bots.slavebot.api.CommandException;
+import org.slave.bots.slavebot.api.SubCommand;
 import org.slave.bots.slavebot.resources.Message;
 import org.slave.lib.helpers.ArrayHelper;
 
@@ -38,13 +40,19 @@ public final class CommandMail implements Command {
     }
 
     @Override
-    public boolean isCommandNameCaseSensitive() {
+    public SubCommand[] getSubCommands() {
+        return null;
+    }
+
+
+    @Override
+    public boolean isNameCaseSensitive() {
         return false;
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
-    public void doCommand(final PircBot instance, final String channel, final String sender, final String login, final String hostname, final String[] parameters) {
+    public void doCommand(final PircBot instance, final String channel, final String sender, final String login, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
         if (!CommandMail.MAIL_DIRECTORY.exists()) CommandMail.MAIL_DIRECTORY.mkdir();
 
         File userMailDir = new File(CommandMail.MAIL_DIRECTORY, sender);

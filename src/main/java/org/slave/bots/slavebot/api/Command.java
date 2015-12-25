@@ -1,23 +1,19 @@
 package org.slave.bots.slavebot.api;
 
-import org.jibble.pircbot.PircBot;
-
 /**
  * Created by Master801 on 11/29/2015 at 8:06 AM.
  *
  * @author Master801
  */
-public interface Command {
+public interface Command extends BaseCommand {
 
     String[] getCommandNames();
 
-    boolean isCommandNameCaseSensitive();
-
-    void doCommand(PircBot instance, final String channel, final String sender, final String login, final String hostname, final String[] parameters);
-
     /**
-     * ${COMMAND_NAME}
+     * Note, there must be <b>NO</b> default usage of this command if sub-commands are the be used.
+     *
+     * @return Sub-commands for this command. Return null or an empty array if there are no sub-command available.
      */
-    String getUsage();
+    SubCommand[] getSubCommands();
 
 }

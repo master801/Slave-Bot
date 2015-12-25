@@ -4,6 +4,8 @@ import org.jibble.pircbot.Colors;
 import org.jibble.pircbot.PircBot;
 import org.slave.bots.slavebot.SlaveBot;
 import org.slave.bots.slavebot.api.Command;
+import org.slave.bots.slavebot.api.CommandException;
+import org.slave.bots.slavebot.api.SubCommand;
 
 /**
  * Created by Master801 on 11/29/2015 at 8:06 AM.
@@ -25,12 +27,17 @@ public final class CommandAbout implements Command {
     }
 
     @Override
-    public boolean isCommandNameCaseSensitive() {
+    public SubCommand[] getSubCommands() {
+        return null;
+    }
+
+    @Override
+    public boolean isNameCaseSensitive() {
         return false;
     }
 
     @Override
-    public void doCommand(PircBot instance, final String channel, final String sender, final String login, final String hostname, final String[] parameters) {
+    public void doCommand(PircBot instance, final String channel, final String sender, final String login, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
         final String description = "I am a bot created by Master 801 with PircBot. I have very little functionality, so please refrain from talking to me.";
         if (channel == null || sender == null || login == null || hostname == null) {
             SlaveBot.SLAVE_BOT_LOGGER.info(description);
@@ -41,7 +48,7 @@ public final class CommandAbout implements Command {
 
     @Override
     public String getUsage() {
-        return null;
+        return "Use \"!${COMMAND_NAME}\" to show the info for the bot.";
     }
 
 }

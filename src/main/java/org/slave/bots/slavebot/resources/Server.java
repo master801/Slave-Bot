@@ -2,6 +2,7 @@ package org.slave.bots.slavebot.resources;
 
 import org.slave.lib.api.Copyable;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -9,7 +10,7 @@ import java.util.ArrayList;
  *
  * @author Master801
  */
-public final class Server implements Copyable<Server> {
+public final class Server implements Serializable, Copyable<Server> {
 
     private final String name, password;
     private final int port;

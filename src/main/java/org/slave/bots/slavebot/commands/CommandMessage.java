@@ -1,10 +1,9 @@
 package org.slave.bots.slavebot.commands;
 
-import com.google.common.base.Joiner;
 import org.jibble.pircbot.PircBot;
-import org.slave.bots.slavebot.SlaveBot;
 import org.slave.bots.slavebot.api.Command;
-import org.slave.lib.helpers.ArrayHelper;
+import org.slave.bots.slavebot.api.CommandException;
+import org.slave.bots.slavebot.api.SubCommand;
 
 /**
  * Created by Master801 on 11/29/2015 at 10:09 AM.
@@ -27,31 +26,68 @@ public final class CommandMessage implements Command {
     }
 
     @Override
-    public boolean isCommandNameCaseSensitive() {
+    public SubCommand[] getSubCommands() {
+        return new SubCommand[] {
+                new SubCommand() {
+
+                    @Override
+                    public String getSubCommandName() {
+                        return "channel";
+                    }
+
+                    @Override
+                    public boolean isNameCaseSensitive() {
+                        return false;
+                    }
+
+                    @Override
+                    public void doCommand(PircBot instance, String channel, String sender, String login, String hostname, String completeLine, String[] parameters) throws CommandException {
+                    }
+
+                    @Override
+                    public String getUsage() {
+                        return null;
+                    }
+
+                },
+                new SubCommand() {
+
+                    @Override
+                    public String getSubCommandName() {
+                        return "user";
+                    }
+
+                    @Override
+                    public boolean isNameCaseSensitive() {
+                        return false;
+                    }
+
+                    @Override
+                    public void doCommand(PircBot instance, String channel, String sender, String login, String hostname, String completeLine, String[] parameters) throws CommandException {
+                    }
+
+                    @Override
+                    public String getUsage() {
+                        return null;
+                    }
+
+                }
+        };
+    }
+
+    @Override
+    public boolean isNameCaseSensitive() {
         return false;
     }
 
     @Override
-    public void doCommand(PircBot instance, final String channel, final String sender, final String login, final String hostname, final String[] parameters) {
-        if (channel == null || sender == null || login == null || hostname == null) return;
-
-        if (sender.equals(SlaveBot.getOwnerName()) && login.equals("~" + SlaveBot.getOwnerName())) {
-            if (!ArrayHelper.isNullOrEmpty(parameters) && parameters.length >= 2) {
-                String[] newParameters = new String[parameters.length - 1];
-                System.arraycopy(parameters, 1, newParameters, 0, newParameters.length);
-
-                instance.sendMessage(parameters[0], Joiner.on(' ').join(newParameters));
-            } else {
-                instance.sendMessage(channel, (sender + ": ") + "Found no user to message to, or no message at all!");
-            }
-        } else {
-            instance.sendMessage(channel, (sender + ": ") + "Only my owner may use this command!");
-        }
+    public void doCommand(PircBot instance, final String channel, final String sender, final String login, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
+        //NOOP
     }
 
     @Override
     public String getUsage() {
-        return "Use \"!${COMMAND_NAME} SOMEONE A_MESSAGE\" to message a user in the channel. Use \"!${COMMAND_NAME} CHANNEL SOMEONE A_MESSAGE\" to message a user in the specified channel. Only my owner may use this command.";
+        return "";
     }
 
 }

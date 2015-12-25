@@ -2,6 +2,7 @@ package org.slave.bots.slavebot;
 
 import org.jibble.pircbot.IrcException;
 import org.slave.bots.slavebot.resources.Channel;
+import org.slave.bots.slavebot.resources.ServerHandler;
 import org.slave.lib.helpers.ArrayHelper;
 import org.slave.lib.helpers.StringHelper;
 
