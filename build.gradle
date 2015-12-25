@@ -9,7 +9,7 @@ sourceCompatibility = '1.7'
 targetCompatibility = '1.7'
 
 version = project.properties['version']
-group = 'org.slave.bot'
+group = 'org.slave'
 archivesBaseName = 'Slave-Bot'
 
 idea {

@@ -1,4 +1,4 @@
-package org.slave.bots.slavebot.api;
+package org.slave.slavebot.api;
 
 import org.jibble.pircbot.PircBot;
 

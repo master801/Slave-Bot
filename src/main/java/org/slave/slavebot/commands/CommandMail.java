@@ -1,12 +1,12 @@
-package org.slave.bots.slavebot.commands;
+package org.slave.slavebot.commands;
 
 import com.google.common.base.Joiner;
 import org.jibble.pircbot.PircBot;
-import org.slave.bots.slavebot.SlaveBot;
-import org.slave.bots.slavebot.api.Command;
-import org.slave.bots.slavebot.api.CommandException;
-import org.slave.bots.slavebot.api.SubCommand;
-import org.slave.bots.slavebot.resources.Message;
+import org.slave.slavebot.SlaveBot;
+import org.slave.slavebot.api.Command;
+import org.slave.slavebot.api.CommandException;
+import org.slave.slavebot.api.SubCommand;
+import org.slave.slavebot.resources.Message;
 import org.slave.lib.helpers.ArrayHelper;
 
 import java.io.File;

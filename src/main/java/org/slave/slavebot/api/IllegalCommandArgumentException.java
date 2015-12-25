@@ -1,8 +1,11 @@
-package org.slave.bots.slavebot.api;
+package org.slave.slavebot.api;
+
+import org.slave.slavebot.commands.CommandAbout;
+import org.slave.slavebot.commands.CommandStop;
 
 /**
  * <p>
- *     Thrown when the command has not found any arguments for it, or when there are more arguments that needed (examples: {@link org.slave.bots.slavebot.commands.CommandStop} {@link org.slave.bots.slavebot.commands.CommandAbout}).
+ *     Thrown when the command has not found any arguments for it, or when there are more arguments that needed (examples: {@link CommandStop} {@link CommandAbout}).
  * </p>
  *
  *

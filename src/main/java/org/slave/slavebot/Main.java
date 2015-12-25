@@ -1,8 +1,8 @@
-package org.slave.bots.slavebot;
+package org.slave.slavebot;
 
 import org.jibble.pircbot.IrcException;
-import org.slave.bots.slavebot.resources.Channel;
-import org.slave.bots.slavebot.resources.ServerHandler;
+import org.slave.slavebot.resources.Channel;
+import org.slave.slavebot.resources.ServerHandler;
 import org.slave.lib.helpers.ArrayHelper;
 import org.slave.lib.helpers.StringHelper;
 

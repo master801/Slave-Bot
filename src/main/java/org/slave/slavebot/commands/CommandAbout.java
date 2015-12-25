@@ -1,11 +1,11 @@
-package org.slave.bots.slavebot.commands;
+package org.slave.slavebot.commands;
 
 import org.jibble.pircbot.Colors;
 import org.jibble.pircbot.PircBot;
-import org.slave.bots.slavebot.SlaveBot;
-import org.slave.bots.slavebot.api.Command;
-import org.slave.bots.slavebot.api.CommandException;
-import org.slave.bots.slavebot.api.SubCommand;
+import org.slave.slavebot.SlaveBot;
+import org.slave.slavebot.api.Command;
+import org.slave.slavebot.api.CommandException;
+import org.slave.slavebot.api.SubCommand;
 
 /**
  * Created by Master801 on 11/29/2015 at 8:06 AM.

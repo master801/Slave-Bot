@@ -1,10 +1,10 @@
-package org.slave.bots.slavebot.resources;
+package org.slave.slavebot.resources;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.slave.bots.slavebot.SlaveBot;
+import org.slave.slavebot.SlaveBot;
 
 import java.io.*;
 

@@ -1,23 +1,23 @@
-package org.slave.bots.slavebot;
+package org.slave.slavebot;
 
 import com.google.common.base.Joiner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jibble.pircbot.Colors;
 import org.jibble.pircbot.PircBot;
-import org.slave.bots.slavebot.api.Command;
-import org.slave.bots.slavebot.api.CommandException;
-import org.slave.bots.slavebot.api.CommandNotFoundException;
-import org.slave.bots.slavebot.api.IllegalCommandArgumentException;
-import org.slave.bots.slavebot.api.IllegalCommandArgumentException.ArgumentType;
-import org.slave.bots.slavebot.api.SubCommand;
-import org.slave.bots.slavebot.commands.CommandAbout;
-import org.slave.bots.slavebot.commands.CommandJoinChannel;
-import org.slave.bots.slavebot.commands.CommandMail;
-import org.slave.bots.slavebot.commands.CommandMessage;
-import org.slave.bots.slavebot.commands.CommandPartChannel;
-import org.slave.bots.slavebot.commands.CommandReconnect;
-import org.slave.bots.slavebot.commands.CommandStop;
+import org.slave.slavebot.api.Command;
+import org.slave.slavebot.api.CommandException;
+import org.slave.slavebot.api.CommandNotFoundException;
+import org.slave.slavebot.api.IllegalCommandArgumentException;
+import org.slave.slavebot.api.IllegalCommandArgumentException.ArgumentType;
+import org.slave.slavebot.api.SubCommand;
+import org.slave.slavebot.commands.CommandAbout;
+import org.slave.slavebot.commands.CommandJoinChannel;
+import org.slave.slavebot.commands.CommandMail;
+import org.slave.slavebot.commands.CommandMessage;
+import org.slave.slavebot.commands.CommandPartChannel;
+import org.slave.slavebot.commands.CommandReconnect;
+import org.slave.slavebot.commands.CommandStop;
 import org.slave.lib.helpers.ArrayHelper;
 import org.slave.lib.helpers.StringHelper;
 

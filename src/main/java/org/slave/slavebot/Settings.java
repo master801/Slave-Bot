@@ -1,4 +1,4 @@
-package org.slave.bots.slavebot;
+package org.slave.slavebot;
 
 import org.slave.lib.api.CommentProperties;
 import org.slave.lib.helpers.ConfigHelper;

@@ -1,4 +1,4 @@
-package org.slave.bots.slavebot.resources;
+package org.slave.slavebot.resources;
 
 import org.slave.lib.api.Copyable;
 

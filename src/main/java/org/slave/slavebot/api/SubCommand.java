@@ -1,4 +1,4 @@
-package org.slave.bots.slavebot.api;
+package org.slave.slavebot.api;
 
 /**
  * Created by Master801 on 12/25/2015 at 1:17 PM.
