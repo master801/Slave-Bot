@@ -2,7 +2,7 @@ package org.slave.slavebot.commands;
 
 import org.jibble.pircbot.PircBot;
 import org.slave.slavebot.api.Command;
-import org.slave.slavebot.api.CommandException;
+import org.slave.slavebot.api.exception.CommandException;
 import org.slave.slavebot.api.SubCommand;
 
 /**

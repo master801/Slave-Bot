@@ -2,7 +2,7 @@ package org.slave.slavebot.commands;
 
 import org.jibble.pircbot.PircBot;
 import org.slave.slavebot.api.Command;
-import org.slave.slavebot.api.CommandException;
+import org.slave.slavebot.api.exception.CommandException;
 import org.slave.slavebot.api.SubCommand;
 
 /**
@@ -41,7 +41,7 @@ public final class CommandMessage implements Command {
                     }
 
                     @Override
-                    public void doCommand(PircBot instance, String channel, String sender, String login, String hostname, String completeLine, String[] parameters) throws CommandException {
+                    public void doCommand(final PircBot instance, final String channel, final String sender, final String login, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
                     }
 
                     @Override
@@ -63,7 +63,7 @@ public final class CommandMessage implements Command {
                     }
 
                     @Override
-                    public void doCommand(PircBot instance, String channel, String sender, String login, String hostname, String completeLine, String[] parameters) throws CommandException {
+                    public void doCommand(final PircBot instance, final String channel, final String sender, final String login, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
                     }
 
                     @Override

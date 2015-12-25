@@ -4,7 +4,7 @@ import org.jibble.pircbot.Colors;
 import org.jibble.pircbot.PircBot;
 import org.slave.slavebot.SlaveBot;
 import org.slave.slavebot.api.Command;
-import org.slave.slavebot.api.CommandException;
+import org.slave.slavebot.api.exception.CommandException;
 import org.slave.slavebot.api.SubCommand;
 
 /**

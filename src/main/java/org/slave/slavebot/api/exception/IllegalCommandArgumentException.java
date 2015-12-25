@@ -1,4 +1,4 @@
-package org.slave.slavebot.api;
+package org.slave.slavebot.api.exception;
 
 import org.slave.slavebot.commands.CommandAbout;
 import org.slave.slavebot.commands.CommandStop;

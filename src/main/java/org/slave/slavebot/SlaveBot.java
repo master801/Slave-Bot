@@ -6,11 +6,12 @@ import org.apache.logging.log4j.Logger;
 import org.jibble.pircbot.Colors;
 import org.jibble.pircbot.PircBot;
 import org.slave.slavebot.api.Command;
-import org.slave.slavebot.api.CommandException;
-import org.slave.slavebot.api.CommandNotFoundException;
-import org.slave.slavebot.api.IllegalCommandArgumentException;
-import org.slave.slavebot.api.IllegalCommandArgumentException.ArgumentType;
+import org.slave.slavebot.api.exception.CommandException;
+import org.slave.slavebot.api.exception.CommandNotFoundException;
+import org.slave.slavebot.api.exception.IllegalCommandArgumentException;
+import org.slave.slavebot.api.exception.IllegalCommandArgumentException.ArgumentType;
 import org.slave.slavebot.api.SubCommand;
+import org.slave.slavebot.api.exception.SubCommandNotFoundException;
 import org.slave.slavebot.commands.CommandAbout;
 import org.slave.slavebot.commands.CommandJoinChannel;
 import org.slave.slavebot.commands.CommandMail;
@@ -68,9 +69,9 @@ public final class SlaveBot extends PircBot {
         sendMessage(SlaveBot.getOwnerName(), message);
     }
 
-    public void doCommand(final String channel, final String sender, final String login, final String hostname, String message) {
+    public void doCommand(final String channel, final String sender, final String login, final String hostname, final String message) {
         final String commandNameInMessage = message.substring(1, message.indexOf(' ') != -1 ? message.indexOf(' ') : message.length());
-        final String completeLine = message.substring(message.indexOf(' ') != -1 ? message.indexOf(' ') + 1 : commandNameInMessage.length() + 1);
+        String completeLine = message.substring(message.indexOf(commandNameInMessage));
         String[] parameters = completeLine.split(" ");
 
         Command command = null;
@@ -97,10 +98,15 @@ public final class SlaveBot extends PircBot {
             }
             if (subCommand != null) {
                 try {
-                subCommand.doCommand(this, channel, sender, login, hostname, completeLine, parameters);
+                    completeLine = completeLine.substring(completeLine.indexOf(parameters[0]));
+
+                    String[] cache = new String[parameters.length - 1];
+                    System.arraycopy(parameters, 1, cache, 0, cache.length);
+
+                    subCommand.doCommand(this, channel, sender, login, hostname, completeLine, parameters);
                 } catch(CommandException e) {
                     if (e instanceof IllegalCommandArgumentException) {
-                        switch(((IllegalCommandArgumentException)e).getArgumentType()) {
+                        switch(((IllegalCommandArgumentException) e).getArgumentType()) {
                             case TOO_MANY:
                                 sendMessage(channel, (sender + ": ") + "Too many parameters for this sub-command!");
                                 break;
@@ -112,6 +118,10 @@ public final class SlaveBot extends PircBot {
                     if (e instanceof CommandNotFoundException) {
                         sendMessage(channel, (sender + ": ") + String.format("Did not find command \"%s\"!", ((CommandNotFoundException)e).getCommandName()));
                     }
+                    if (e instanceof SubCommandNotFoundException) {
+                        SubCommandNotFoundException subCommandNotFoundException = (SubCommandNotFoundException)e;
+                        sendMessage(channel, (sender + ": ") + String.format("Did not find sub-command \"%s\" from command \"%s\"!", subCommandNotFoundException.getSubCommandName(), subCommandNotFoundException.getCommandName()));
+                    }
                 }
             } else {
                 sendMessage(channel, Colors.RED + (sender + ": ") + "Found no such sub-command!");
@@ -121,7 +131,7 @@ public final class SlaveBot extends PircBot {
                 command.doCommand(this, channel, sender, login, hostname, completeLine, parameters);
             } catch(CommandException e) {
                 if (e instanceof IllegalCommandArgumentException) {
-                    switch(((IllegalCommandArgumentException)e).getArgumentType()) {
+                    switch(((IllegalCommandArgumentException) e).getArgumentType()) {
                         case TOO_MANY:
                             sendMessage(channel, (sender + ": ") + "Too many parameters for this command!");
                             break;
@@ -165,21 +175,35 @@ public final class SlaveBot extends PircBot {
             if (ArrayHelper.isNullOrEmpty(parameters)) throw new IllegalCommandArgumentException(ArgumentType.NOT_ENOUGH);
             if (parameters.length > 2) throw new IllegalCommandArgumentException(ArgumentType.TOO_MANY);
 
+
+            Command command = null;
+
+            ITERATING:
             for(final Command iteratingCommand : SlaveBot.this.commands) {
                 for(final String iteratingCommandName : iteratingCommand.getCommandNames()) {
                     if (iteratingCommand.isNameCaseSensitive() ? iteratingCommandName.equals(parameters[0]) : iteratingCommandName.equalsIgnoreCase(parameters[0])) {
-                        switch(parameters.length) {
-                            case 1:
-                                sendMessage(channel, (sender + ": ") + iteratingCommand.getUsage());
-                                break;
-                            case 2:
-                                break;
-                        }
-                        return;
+                        command = iteratingCommand;
+                        break ITERATING;
                     }
                 }
             }
-            throw new CommandNotFoundException(parameters[0]);
+
+            if (command != null) {
+                switch(parameters.length) {
+                    case 1:
+                        sendMessage(channel, (sender + ": ") + command.getUsage());
+                        break;
+                    case 2:
+                        break;
+                }
+            }
+
+            switch(parameters.length) {
+                case 1:
+                    throw new CommandNotFoundException(parameters[0]);
+                case 2:
+                    throw new SubCommandNotFoundException(parameters[0], parameters[1]);
+            }
         }
 
         @Override
@@ -215,7 +239,7 @@ public final class SlaveBot extends PircBot {
         public void doCommand(final PircBot instance, final String channel, final String sender, final String login, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
             if (!ArrayHelper.isNullOrEmpty(parameters)) throw new IllegalCommandArgumentException(ArgumentType.TOO_MANY);
             if (StringHelper.isNullOrEmpty(allCommandNames)) rebuild();
-            sendMessage(channel, (sender +  ": ") + "All commands: \"" + allCommandNames + "\"");
+            sendMessage(channel, (sender + ": ") + "All commands: \"" + allCommandNames + "\"");
         }
 
         private void rebuild() {

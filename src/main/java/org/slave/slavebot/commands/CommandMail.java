@@ -4,7 +4,7 @@ import com.google.common.base.Joiner;
 import org.jibble.pircbot.PircBot;
 import org.slave.slavebot.SlaveBot;
 import org.slave.slavebot.api.Command;
-import org.slave.slavebot.api.CommandException;
+import org.slave.slavebot.api.exception.CommandException;
 import org.slave.slavebot.api.SubCommand;
 import org.slave.slavebot.resources.Message;
 import org.slave.lib.helpers.ArrayHelper;

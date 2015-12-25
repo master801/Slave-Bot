@@ -1,4 +1,4 @@
-package org.slave.slavebot.api;
+package org.slave.slavebot.api.exception;
 
 /**
  * Created by Master801 on 12/25/2015 at 2:25 PM.
