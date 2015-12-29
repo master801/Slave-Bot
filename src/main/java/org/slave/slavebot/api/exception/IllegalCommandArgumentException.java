@@ -15,6 +15,8 @@ import org.slave.slavebot.commands.CommandStop;
  */
 public final class IllegalCommandArgumentException extends CommandException {
 
+    private static final long serialVersionUID = -2319036197169022004L;
+
     private final ArgumentType argumentType;
 
     public IllegalCommandArgumentException(ArgumentType argumentType) {

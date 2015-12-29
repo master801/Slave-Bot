@@ -16,4 +16,9 @@ public interface Command extends BaseCommand {
      */
     SubCommand[] getSubCommands();
 
+    /**
+     * @return If the command has any sub-commands
+     */
+    boolean hasSubCommands();
+
 }

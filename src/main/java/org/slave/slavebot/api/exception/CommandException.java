@@ -7,6 +7,8 @@ package org.slave.slavebot.api.exception;
  */
 public abstract class CommandException extends Exception {
 
+    private static final long serialVersionUID = -5480623169065789412L;
+
     public CommandException() {
     }
 

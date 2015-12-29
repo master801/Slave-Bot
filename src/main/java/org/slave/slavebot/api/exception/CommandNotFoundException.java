@@ -7,6 +7,8 @@ package org.slave.slavebot.api.exception;
  */
 public final class CommandNotFoundException extends CommandException {
 
+    private static final long serialVersionUID = 2653865569756900685L;
+
     private final String commandName;
 
     public CommandNotFoundException(final String commandName) {

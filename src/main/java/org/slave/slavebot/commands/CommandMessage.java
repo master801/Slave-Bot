@@ -1,9 +1,9 @@
 package org.slave.slavebot.commands;
 
-import org.jibble.pircbot.PircBot;
+import org.slave.slavebot.api.Bot;
 import org.slave.slavebot.api.Command;
-import org.slave.slavebot.api.exception.CommandException;
 import org.slave.slavebot.api.SubCommand;
+import org.slave.slavebot.api.exception.CommandException;
 
 /**
  * Created by Master801 on 11/29/2015 at 10:09 AM.
@@ -41,7 +41,7 @@ public final class CommandMessage implements Command {
                     }
 
                     @Override
-                    public void doCommand(final PircBot instance, final String channel, final String sender, final String login, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
+                    public void doCommand(final Bot instance, final String channel, final String senderNickName, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
                     }
 
                     @Override
@@ -63,7 +63,7 @@ public final class CommandMessage implements Command {
                     }
 
                     @Override
-                    public void doCommand(final PircBot instance, final String channel, final String sender, final String login, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
+                    public void doCommand(final Bot instance, final String channel, final String senderNickName, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
                     }
 
                     @Override
@@ -76,12 +76,17 @@ public final class CommandMessage implements Command {
     }
 
     @Override
+    public boolean hasSubCommands() {
+        return true;
+    }
+
+    @Override
     public boolean isNameCaseSensitive() {
         return false;
     }
 
     @Override
-    public void doCommand(PircBot instance, final String channel, final String sender, final String login, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
+    public void doCommand(Bot instance, final String channel, final String senderNickName, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
         //NOOP
     }
 

@@ -7,6 +7,8 @@ package org.slave.slavebot.api.exception;
  */
 public final class SubCommandNotFoundException extends CommandException {
 
+    private static final long serialVersionUID = 1985383576486031253L;
+
     private final String commandName, subCommandName;
 
     public SubCommandNotFoundException(final String commandName, final String subCommandName) {

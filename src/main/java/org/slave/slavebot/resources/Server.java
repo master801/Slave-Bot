@@ -12,6 +12,8 @@ import java.util.ArrayList;
  */
 public final class Server implements Serializable, Copyable<Server> {
 
+    private static final long serialVersionUID = 4064671318681946206L;
+
     private final String name, password;
     private final int port;
     private final ArrayList<Channel> channels = new ArrayList<>();

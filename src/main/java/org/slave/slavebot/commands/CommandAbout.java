@@ -1,11 +1,11 @@
 package org.slave.slavebot.commands;
 
 import org.jibble.pircbot.Colors;
-import org.jibble.pircbot.PircBot;
 import org.slave.slavebot.SlaveBot;
+import org.slave.slavebot.api.Bot;
 import org.slave.slavebot.api.Command;
-import org.slave.slavebot.api.exception.CommandException;
 import org.slave.slavebot.api.SubCommand;
+import org.slave.slavebot.api.exception.CommandException;
 
 /**
  * Created by Master801 on 11/29/2015 at 8:06 AM.
@@ -32,18 +32,23 @@ public final class CommandAbout implements Command {
     }
 
     @Override
+    public boolean hasSubCommands() {
+        return false;
+    }
+
+    @Override
     public boolean isNameCaseSensitive() {
         return false;
     }
 
     @Override
-    public void doCommand(PircBot instance, final String channel, final String sender, final String login, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
+    public void doCommand(Bot instance, final String channel, final String senderNickName, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
         final String description = "I am a bot created by Master 801 with PircBot. I have very little functionality, so please refrain from talking to me.";
-        if (channel == null || sender == null || login == null || hostname == null) {
+        if (channel == null || senderNickName == null || hostname == null) {
             SlaveBot.SLAVE_BOT_LOGGER.info(description);
             return;
         }
-        instance.sendMessage(channel, (sender + ": ") + Colors.BLUE + description);
+        instance.sendMessage(channel, (senderNickName + ": ") + Colors.BLUE + description);
     }
 
     @Override

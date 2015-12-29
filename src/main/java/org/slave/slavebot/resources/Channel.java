@@ -11,6 +11,8 @@ import java.io.Serializable;
  */
 public final class Channel implements Serializable, Copyable<Channel> {
 
+    private static final long serialVersionUID = -8996446332888283100L;
+
     private final String name, password;
 
     Channel(final String name, final String password) {

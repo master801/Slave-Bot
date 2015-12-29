@@ -1,9 +1,9 @@
 package org.slave.slavebot.commands;
 
-import org.jibble.pircbot.PircBot;
+import org.slave.slavebot.api.Bot;
 import org.slave.slavebot.api.Command;
-import org.slave.slavebot.api.exception.CommandException;
 import org.slave.slavebot.api.SubCommand;
+import org.slave.slavebot.api.exception.CommandException;
 
 /**
  * Created by Master801 on 11/29/2015 at 8:33 AM.
@@ -30,14 +30,19 @@ public final class CommandReconnect implements Command {
     }
 
     @Override
+    public boolean hasSubCommands() {
+        return false;
+    }
+
+    @Override
     public boolean isNameCaseSensitive() {
         return false;
     }
 
     @Override
-    public void doCommand(PircBot instance, final String channel, final String sender, final String login, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
+    public void doCommand(Bot instance, final String channel, final String senderNickName, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
         //FIXME
-        instance.sendMessage(channel, (sender + ": ") + "Command is disabled. Sorry about that!");
+        instance.sendMessage(channel, (senderNickName + ": ") + "Command is disabled. Sorry about that!");
         /*
         for(User user : instance.getUsers(channel)) {
             if (user.getNick().equals(sender) && user.isOp()) {

@@ -1,13 +1,13 @@
 package org.slave.slavebot.commands;
 
 import com.google.common.base.Joiner;
-import org.jibble.pircbot.PircBot;
-import org.slave.slavebot.SlaveBot;
-import org.slave.slavebot.api.Command;
-import org.slave.slavebot.api.exception.CommandException;
-import org.slave.slavebot.api.SubCommand;
-import org.slave.slavebot.resources.Message;
 import org.slave.lib.helpers.ArrayHelper;
+import org.slave.slavebot.SlaveBot;
+import org.slave.slavebot.api.Bot;
+import org.slave.slavebot.api.Command;
+import org.slave.slavebot.api.SubCommand;
+import org.slave.slavebot.api.exception.CommandException;
+import org.slave.slavebot.resources.Message;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,7 +41,13 @@ public final class CommandMail implements Command {
 
     @Override
     public SubCommand[] getSubCommands() {
-        return null;
+        return new SubCommand[] {
+        };
+    }
+
+    @Override
+    public boolean hasSubCommands() {
+        return true;
     }
 
 
@@ -52,14 +58,14 @@ public final class CommandMail implements Command {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
-    public void doCommand(final PircBot instance, final String channel, final String sender, final String login, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
+    public void doCommand(final Bot instance, final String channel, final String senderNickName, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
         if (!CommandMail.MAIL_DIRECTORY.exists()) CommandMail.MAIL_DIRECTORY.mkdir();
 
-        File userMailDir = new File(CommandMail.MAIL_DIRECTORY, sender);
+        File userMailDir = new File(CommandMail.MAIL_DIRECTORY, senderNickName);
         if (parameters.length == 1 && parameters[0].equalsIgnoreCase("")) {//Assume someone is checking their mail
             if (!userMailDir.exists() || ArrayHelper.isNullOrEmpty(userMailDir.list())) {
                 userMailDir.mkdir();
-                instance.sendMessage(channel, (sender + ": ") + "No mail!");
+                instance.sendMessage(channel, (senderNickName + ": ") + "No mail!");
             } else {
                 File[] files = userMailDir.listFiles();
                 if (!ArrayHelper.isNullOrEmpty(files)) {
@@ -80,13 +86,13 @@ public final class CommandMail implements Command {
                             SlaveBot.SLAVE_BOT_LOGGER.catching(e);
                         }
                     }
-                    for(Message message : messages) instance.sendMessage(sender, String.format("From: \"%s\", ID: \"%s\", Message: \"%s\"", message.getSender(), message.getUUID(), message.getMessage()));
+                    for(Message message : messages) instance.sendMessage(senderNickName, String.format("From: \"%s\", ID: \"%s\", Message: \"%s\"", message.getSender(), message.getUUID(), message.getMessage()));
                 }
             }
             return;
         }
         if (parameters.length < 2) {
-            instance.sendMessage(channel, (sender + ": ") + "No person or message specified!");
+            instance.sendMessage(channel, (senderNickName + ": ") + "No person or message specified!");
             return;
         }
 
@@ -137,7 +143,7 @@ public final class CommandMail implements Command {
         String[] choppedStringMessage = new String[parameters.length - 1];
         System.arraycopy(parameters, 1, choppedStringMessage, 0, choppedStringMessage.length);
 
-        Message message = new Message(UUID.randomUUID().toString(), sender, parameters[1], Joiner.on(' ').join(choppedStringMessage));
+        Message message = new Message(UUID.randomUUID().toString(), senderNickName, parameters[1], Joiner.on(' ').join(choppedStringMessage));
 
         try {
             int index = 0;

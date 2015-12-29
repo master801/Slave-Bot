@@ -11,6 +11,8 @@ import java.io.Serializable;
  */
 public final class Message implements Serializable, Copyable<Message> {
 
+    private static final long serialVersionUID = 5419232013811985204L;
+
     private final String uuid;
     private final String sender, recipient;
     private final String message;

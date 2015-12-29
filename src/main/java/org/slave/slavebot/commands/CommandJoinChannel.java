@@ -2,10 +2,11 @@ package org.slave.slavebot.commands;
 
 import org.jibble.pircbot.PircBot;
 import org.jibble.pircbot.User;
-import org.slave.slavebot.api.Command;
-import org.slave.slavebot.api.exception.CommandException;
-import org.slave.slavebot.api.SubCommand;
 import org.slave.lib.helpers.StringHelper;
+import org.slave.slavebot.api.Bot;
+import org.slave.slavebot.api.Command;
+import org.slave.slavebot.api.SubCommand;
+import org.slave.slavebot.api.exception.CommandException;
 
 /**
  * Created by Master801 on 11/29/2015 at 8:36 AM.
@@ -31,6 +32,11 @@ public final class CommandJoinChannel implements Command {
         return null;
     }
 
+    @Override
+    public boolean hasSubCommands() {
+        return false;
+    }
+
 
     @Override
     public boolean isNameCaseSensitive() {
@@ -38,10 +44,10 @@ public final class CommandJoinChannel implements Command {
     }
 
     @Override
-    public void doCommand(PircBot instance, final String channel, final String sender, final String login, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
-        if (channel == null || sender == null || login == null || hostname == null) return;
-        for(User user : instance.getUsers(channel)) {
-            if (user.getNick().equals(sender) && user.isOp()) {
+    public void doCommand(Bot instance, final String channel, final String senderNickName, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
+        if (channel == null || senderNickName == null || hostname == null) return;
+        for(User user : ((PircBot)instance).getUsers(channel)) {
+            if (user.getNick().equals(senderNickName) && user.isOp()) {
                 String channelName, channelKey;
 
                 if (parameters.length == 2) {//Channel name and key
@@ -56,7 +62,7 @@ public final class CommandJoinChannel implements Command {
                 if (!StringHelper.isNullOrEmpty(channelKey)) {
                     instance.joinChannel(channelName, channelKey);
                 } else {
-                    instance.joinChannel(channelName);
+                    instance.joinChannel(channelName, null);
                 }
                 break;
             }
@@ -65,6 +71,7 @@ public final class CommandJoinChannel implements Command {
 
     @Override
     public String getUsage() {
+        //TODO Refactor
         return "Joining a channel: \"!${COMMAND_NAME} #CHANNEL_NAME\"" +
                 " " +
                 "Joining a channel with a password: \"!${COMMAND_NAME} #CHANNEL_NAME CHANNEL_PASSWORD\"";
