@@ -14,25 +14,20 @@ public final class CommandMessage implements Command {
 
     public static final Command INSTANCE = new CommandMessage();
 
+    private final SubCommand[] subCommands;
+
     private CommandMessage() {
-    }
-
-    @Override
-    public String[] getCommandNames() {
-        return new String[] {
-                "msg",
-                "message"
-        };
-    }
-
-    @Override
-    public SubCommand[] getSubCommands() {
-        return new SubCommand[] {
+        subCommands = new SubCommand[] {
                 new SubCommand() {
 
                     @Override
                     public String getSubCommandName() {
                         return "channel";
+                    }
+
+                    @Override
+                    public void init() {
+                        //NOOP
                     }
 
                     @Override
@@ -58,6 +53,11 @@ public final class CommandMessage implements Command {
                     }
 
                     @Override
+                    public void init() {
+                        //NOOP
+                    }
+
+                    @Override
                     public boolean isNameCaseSensitive() {
                         return false;
                     }
@@ -76,8 +76,26 @@ public final class CommandMessage implements Command {
     }
 
     @Override
+    public String[] getCommandNames() {
+        return new String[] {
+                "msg",
+                "message"
+        };
+    }
+
+    @Override
+    public SubCommand[] getSubCommands() {
+        return subCommands;
+    }
+
+    @Override
     public boolean hasSubCommands() {
         return true;
+    }
+
+    @Override
+    public void init() {
+        //NOOP
     }
 
     @Override

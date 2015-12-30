@@ -35,6 +35,11 @@ public final class CommandReconnect implements Command {
     }
 
     @Override
+    public void init() {
+        //NOOP
+    }
+
+    @Override
     public boolean isNameCaseSensitive() {
         return false;
     }

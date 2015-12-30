@@ -1,10 +1,9 @@
 package org.slave.slavebot;
 
-import org.jibble.pircbot.IrcException;
-import org.slave.slavebot.resources.Channel;
-import org.slave.slavebot.resources.ServerHandler;
 import org.slave.lib.helpers.ArrayHelper;
 import org.slave.lib.helpers.StringHelper;
+import org.slave.slavebot.resources.Channel;
+import org.slave.slavebot.resources.ServerHandler;
 
 import java.io.IOException;
 
@@ -27,10 +26,14 @@ public final class Main {
             return;
         }
 
-        final SlaveBot slaveBot = new SlaveBot();
+        SlaveBot slaveBot = new SlaveBot();
         try {
-            slaveBot.connect(ServerHandler.INSTANCE.getServer().getName(), ServerHandler.INSTANCE.getServer().getPort(), !StringHelper.isNullOrEmpty(ServerHandler.INSTANCE.getServer().getPassword()) ? ServerHandler.INSTANCE.getServer().getPassword() : null);
-        } catch(IOException | IrcException e) {
+            final String serverName = ServerHandler.INSTANCE.getServer().getName();
+            final int serverPort = ServerHandler.INSTANCE.getServer().getPort();
+            final String serverPassword = ServerHandler.INSTANCE.getServer().getPassword();
+
+            slaveBot.connect(serverName, serverPort, serverPassword);
+        } catch(Exception e) {
             SlaveBot.SLAVE_BOT_LOGGER.catching(e);
             System.exit(-1);
             return;

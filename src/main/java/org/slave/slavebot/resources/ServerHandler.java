@@ -18,7 +18,7 @@ public final class ServerHandler {
     public static final ServerHandler INSTANCE = new ServerHandler();
 
     private static final File SERVER_JSON_FILE = new File("servers.json");
-    private static final Object LOCK = new Object();
+    private final Object lock = new Object();
 
     private Server server = null;
 
@@ -27,7 +27,7 @@ public final class ServerHandler {
 
     @SuppressWarnings("unchecked")
     public void load() throws IOException {
-        synchronized(LOCK) {
+        synchronized(lock) {
             if (!ServerHandler.SERVER_JSON_FILE.exists()) {
                 SlaveBot.SLAVE_BOT_LOGGER.warn("Found no \"{}\" file. Creating a dummy one...", ServerHandler.SERVER_JSON_FILE.getName());
                 SlaveBot.SLAVE_BOT_LOGGER.info("Please edit the file to suit your needs.");
@@ -69,7 +69,7 @@ public final class ServerHandler {
 
     @SuppressWarnings("unchecked")
     private void createDefault() throws IOException {
-        synchronized(LOCK) {
+        synchronized(lock) {
             JSONObject serverJSON = new JSONObject();
             serverJSON.put("name", "");
             serverJSON.put("port", 0);
@@ -96,7 +96,7 @@ public final class ServerHandler {
     }
 
     public Server getServer() {
-        synchronized(LOCK) {
+        synchronized(lock) {
             return server;
         }
     }

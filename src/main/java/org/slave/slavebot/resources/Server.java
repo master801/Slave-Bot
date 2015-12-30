@@ -1,6 +1,6 @@
 package org.slave.slavebot.resources;
 
-import org.slave.lib.api.Copyable;
+import org.slave.lib.helpers.StringHelper;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
  *
  * @author Master801
  */
-public final class Server implements Serializable, Copyable<Server> {
+public final class Server implements Serializable {
 
     private static final long serialVersionUID = 4064671318681946206L;
 
@@ -34,12 +34,14 @@ public final class Server implements Serializable, Copyable<Server> {
     }
 
     public Channel addChannel(String name, String password) {
+        if (StringHelper.isNullOrEmpty(name)) return null;
         Channel channel = new Channel(name, password);
         channels.add(channel);
         return channel;
     }
 
     public void removeChannel(String name) {
+        if (StringHelper.isNullOrEmpty(name)) return;
         for(Channel channel : channels) {
             if (channel.getName().equals(name)) {
                 channels.remove(channel);
@@ -62,11 +64,6 @@ public final class Server implements Serializable, Copyable<Server> {
 
     public int getPort() {
         return port;
-    }
-
-    @Override
-    public Server copy() {
-        return new Server(name, port, password, channels);
     }
 
 }

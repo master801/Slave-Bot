@@ -2,12 +2,15 @@ package org.slave.slavebot.commands;
 
 import com.google.common.base.Joiner;
 import org.slave.lib.helpers.ArrayHelper;
+import org.slave.lib.helpers.FileHelper;
 import org.slave.slavebot.SlaveBot;
 import org.slave.slavebot.api.Bot;
 import org.slave.slavebot.api.Command;
 import org.slave.slavebot.api.SubCommand;
 import org.slave.slavebot.api.exception.CommandException;
-import org.slave.slavebot.resources.Message;
+import org.slave.slavebot.api.exception.IllegalCommandArgumentException;
+import org.slave.slavebot.api.exception.IllegalCommandArgumentException.ArgumentType;
+import org.slave.slavebot.resources.Letter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,6 +18,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -27,9 +32,244 @@ public final class CommandMail implements Command {
 
     public static final Command INSTANCE = new CommandMail();
 
-    private static final File MAIL_DIRECTORY = new File("mail");
+    private static final File LETTERS_DIRECTORY = new File("letters");
+
+    private final SubCommand[] subCommands;
 
     private CommandMail() {
+        subCommands = new SubCommand[] {
+                new SubCommand() {
+
+                    @Override
+                    public String getSubCommandName() {
+                        return "delete";
+                    }
+
+                    @Override
+                    public void init() {
+                        //NOOP
+                    }
+
+                    @Override
+                    public boolean isNameCaseSensitive() {
+                        return false;
+                    }
+
+                    @Override
+                    public void doCommand(final Bot instance, final String channel, final String senderNickName, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
+                        if (ArrayHelper.isNullOrEmpty(parameters) || parameters.length < 1) throw new IllegalCommandArgumentException(ArgumentType.NOT_ENOUGH);
+                        File lettersDir = new File(CommandMail.LETTERS_DIRECTORY, senderNickName);
+                        File[] files = lettersDir.listFiles();
+                        if (!lettersDir.exists() || ArrayHelper.isNullOrEmpty(files)) {
+                            instance.sendMessage(senderNickName, "No letters were sent to you");
+                            return;
+                        }
+                        String uuid = parameters[0];
+
+                        String[] check = uuid.split("-");
+                        if ((check.length != 5) || (check[0].length() != 8 || check[1].length() != 4 || check[2].length() != 4 || check[3].length() != 4 || check[4].length() != 12)) {//Manually check given UUID
+                            instance.sendMessage(senderNickName, "Invalid letter UUID!");
+                            return;
+                        }
+
+                        File letterFile = null;
+                        if (ArrayHelper.isNullOrEmpty(files)) {
+                            for(File file : files) {
+                                if (file.getName().substring(0, file.getName().indexOf('.')).equals(uuid)) {
+                                    letterFile = file;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (letterFile != null) {
+                            try {
+                                RandomAccessFile randomAccessFile = new RandomAccessFile(letterFile, FileHelper.MODE_READ);
+                                ByteBuffer headerCache = ByteBuffer.allocate(Letter.HEADER.length());
+                                randomAccessFile.getChannel().read(headerCache);
+                                byte[] headerBytes = Letter.HEADER.getBytes();
+
+                                int i = 0;
+                                while(i < headerCache.capacity()) {
+                                    if (headerBytes[i] != headerCache.get(i)) {
+                                        instance.sendMessage(senderNickName, "Invalid letter!");
+                                        return;
+                                    }
+                                    i++;
+                                }
+                                randomAccessFile.close();
+                            } catch(IOException e) {
+                                SlaveBot.SLAVE_BOT_LOGGER.catching(e);
+                            }
+
+                            letterFile.delete();
+                        } else {
+                            instance.sendMessage(senderNickName, "Found no letter with that UUID!");
+                        }
+                    }
+
+                    @Override
+                    public String getUsage() {
+                        return null;
+                    }
+
+                },
+
+                new SubCommand() {
+
+                    @Override
+                    public String getSubCommandName() {
+                        return "send";
+                    }
+
+                    @Override
+                    public void init() {
+                        //NOOP
+                    }
+
+                    @Override
+                    public boolean isNameCaseSensitive() {
+                        return false;
+                    }
+
+                    @Override
+                    public void doCommand(final Bot instance, final String channel, final String senderNickName, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
+                        if (ArrayHelper.isNullOrEmpty(parameters) || parameters.length < 2) throw new IllegalCommandArgumentException(ArgumentType.NOT_ENOUGH);
+
+                        final String recipient = parameters[0];
+                        String[] cache = new String[parameters.length - 1];
+                        System.arraycopy(parameters, 1, cache, 0, cache.length);
+                        Letter letter = new Letter(UUID.randomUUID().toString(), senderNickName, recipient, Joiner.on(' ').join(cache));
+
+                        File recipientLettersDir = new File(CommandMail.LETTERS_DIRECTORY, recipient);
+                        if (!recipientLettersDir.exists()) recipientLettersDir.mkdirs();
+                        try {
+                            FileOutputStream fileOutputStream = new FileOutputStream(new File(letter.getUUID() + ".letter"));
+                            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+
+                            objectOutputStream.writeObject(letter);
+
+                            objectOutputStream.flush();
+                            objectOutputStream.close();
+                            fileOutputStream.flush();
+                            fileOutputStream.close();
+                        } catch(IOException e) {
+                            SlaveBot.SLAVE_BOT_LOGGER.catching(e);
+                        }
+                    }
+
+                    @Override
+                    public String getUsage() {
+                        return null;
+                    }
+
+                },
+
+                new SubCommand() {
+
+                    @Override
+                    public String getSubCommandName() {
+                        return "read";
+                    }
+
+                    @Override
+                    public void init() {
+                        //NOOP
+                    }
+
+                    @Override
+                    public boolean isNameCaseSensitive() {
+                        return false;
+                    }
+
+                    @Override
+                    public void doCommand(final Bot instance, final String channel, final String senderNickName, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
+                        if (ArrayHelper.isNullOrEmpty(parameters)) throw new IllegalCommandArgumentException(ArgumentType.NOT_ENOUGH);
+                        if (parameters.length > 1) throw new IllegalCommandArgumentException(ArgumentType.TOO_MANY);
+
+                        File letterUserDir = new File(CommandMail.LETTERS_DIRECTORY, senderNickName);
+                        File[] files = letterUserDir.listFiles();
+                        if (CommandMail.this.checkLetters(letterUserDir, files)) {
+                            instance.sendMessage(senderNickName, "No letters were sent for you.");
+                            return;
+                        }
+
+                        String uuid = parameters[0];
+
+                        String[] check = uuid.split("-");
+                        if ((check.length != 5) || (check[0].length() != 8 || check[1].length() != 4 || check[2].length() != 4 || check[3].length() != 4 || check[4].length() != 12)) {//Manually check given UUID
+                            instance.sendMessage(senderNickName, "Invalid letter UUID!");
+                            return;
+                        }
+
+                        for(File file : files) {
+                            if (file.getName().startsWith(uuid)) {
+                                try {
+                                    FileInputStream fileInputStream = new FileInputStream(file);
+                                    ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+
+                                    Letter letter = (Letter)objectInputStream.readObject();
+                                    instance.sendMessage(senderNickName, String.format("Received letter \"%s\" from \"%s\".\nMessage: \"%s\"", letter.getUUID(), letter.getSender(), letter.getMessage()));
+
+
+                                    objectInputStream.close();
+                                    fileInputStream.close();
+                                } catch(IOException | ClassNotFoundException e) {
+                                    SlaveBot.SLAVE_BOT_LOGGER.catching(e);
+                                }
+                                break;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public String getUsage() {
+                        return null;
+                    }
+
+                },
+
+                new SubCommand() {
+
+                    @Override
+                    public String getSubCommandName() {
+                        return "letters";
+                    }
+
+                    @Override
+                    public void init() {
+                        //NOOP
+                    }
+
+                    @Override
+                    public boolean isNameCaseSensitive() {
+                        return false;
+                    }
+
+                    @Override
+                    public void doCommand(final Bot instance, final String channel, final String senderNickName, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
+                        if (!ArrayHelper.isNullOrEmpty(parameters)) throw new IllegalCommandArgumentException(ArgumentType.TOO_MANY);
+
+                        File letterUserDir = new File(CommandMail.LETTERS_DIRECTORY, senderNickName);
+                        File[] files = letterUserDir.listFiles();
+                        if (CommandMail.this.checkLetters(letterUserDir, files)) {
+                            instance.sendMessage(senderNickName, "No letters are available for you!");
+                            return;
+                        }
+
+                        ArrayList<String> letters = new ArrayList<>();
+                        for(File file : files) letters.add(file.getName().substring(file.getName().indexOf('.')));
+
+                        instance.sendMessage(senderNickName, String.format("%d letters are available%s", letters.size(), letters.isEmpty() ? "" : " \"" + Joiner.on("\", \"").join(letters) + "\""));
+                    }
+
+                    @Override
+                    public String getUsage() {
+                        return null;
+                    }
+
+                }
+        };
     }
 
     @Override
@@ -41,8 +281,7 @@ public final class CommandMail implements Command {
 
     @Override
     public SubCommand[] getSubCommands() {
-        return new SubCommand[] {
-        };
+        return subCommands;
     }
 
     @Override
@@ -50,135 +289,32 @@ public final class CommandMail implements Command {
         return true;
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    @Override
+    public void init() {
+        CommandMail.LETTERS_DIRECTORY.mkdirs();
+    }
 
     @Override
     public boolean isNameCaseSensitive() {
         return false;
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     public void doCommand(final Bot instance, final String channel, final String senderNickName, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
-        if (!CommandMail.MAIL_DIRECTORY.exists()) CommandMail.MAIL_DIRECTORY.mkdir();
+        //NOOP
+    }
 
-        File userMailDir = new File(CommandMail.MAIL_DIRECTORY, senderNickName);
-        if (parameters.length == 1 && parameters[0].equalsIgnoreCase("")) {//Assume someone is checking their mail
-            if (!userMailDir.exists() || ArrayHelper.isNullOrEmpty(userMailDir.list())) {
-                userMailDir.mkdir();
-                instance.sendMessage(channel, (senderNickName + ": ") + "No mail!");
-            } else {
-                File[] files = userMailDir.listFiles();
-                if (!ArrayHelper.isNullOrEmpty(files)) {
-                    ArrayList<Message> messages = new ArrayList<>();
-                    for(File file : files) {
-                        if (!file.getName().endsWith(".message")) continue;
-                        try {
-                            FileInputStream fileInputStream = new FileInputStream(file);
-                            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-                            try {
-                                messages.add((Message)objectInputStream.readObject());
-                            } catch(ClassNotFoundException e) {
-                                SlaveBot.SLAVE_BOT_LOGGER.catching(e);
-                            }
-                            objectInputStream.close();
-                            fileInputStream.close();
-                        } catch(IOException e) {
-                            SlaveBot.SLAVE_BOT_LOGGER.catching(e);
-                        }
-                    }
-                    for(Message message : messages) instance.sendMessage(senderNickName, String.format("From: \"%s\", ID: \"%s\", Message: \"%s\"", message.getSender(), message.getUUID(), message.getMessage()));
-                }
-            }
-            return;
-        }
-        if (parameters.length < 2) {
-            instance.sendMessage(channel, (senderNickName + ": ") + "No person or message specified!");
-            return;
-        }
-
-
-        if (parameters[0].equalsIgnoreCase("delete")) {//Delete sub-command
-            final String id = parameters[1];
-            if (id.equalsIgnoreCase("all")) {
-                File[] files = userMailDir.listFiles();
-                if (!ArrayHelper.isNullOrEmpty(files)) {
-                    for(File file : files) file.delete();
-                }
-                return;
-            }
-            try {
-                File[] files = userMailDir.listFiles();
-                if (!ArrayHelper.isNullOrEmpty(files)) {
-                    for(File file : files) {
-                        boolean equal = false;
-                        if (!file.getName().endsWith(".message")) continue;
-                        FileInputStream fileInputStream = new FileInputStream(file);
-                        ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-
-                        try {
-                            Message message = (Message)objectInputStream.readObject();
-                            if (id.equals(message.getUUID())) equal = true;
-                        } catch(ClassNotFoundException e) {
-                            SlaveBot.SLAVE_BOT_LOGGER.catching(e);
-                        }
-
-                        objectInputStream.close();
-                        fileInputStream.close();
-
-                        if (equal) {
-                            file.delete();
-                            break;
-                        }
-                    }
-                }
-            } catch(IOException e) {
-                SlaveBot.SLAVE_BOT_LOGGER.catching(e);
-            }
-            return;
-        }
-        if (!userMailDir.exists()) userMailDir.mkdir();
-
-
-
-        String[] choppedStringMessage = new String[parameters.length - 1];
-        System.arraycopy(parameters, 1, choppedStringMessage, 0, choppedStringMessage.length);
-
-        Message message = new Message(UUID.randomUUID().toString(), senderNickName, parameters[1], Joiner.on(' ').join(choppedStringMessage));
-
-        try {
-            int index = 0;
-
-            if (!ArrayHelper.isNullOrEmpty(userMailDir.list())) {
-                while(true) {
-                    File file = new File(userMailDir, index + ".message");
-                    if (file.exists()) {
-                        index++;
-                    } else {
-                        break;
-                    }
-                }
-            }
-
-            File messageFile = new File(userMailDir, index + ".message");
-
-            FileOutputStream fileOutputStream = new FileOutputStream(messageFile);
-
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-            objectOutputStream.writeObject(message);
-            objectOutputStream.close();
-
-            fileOutputStream.close();
-        } catch(IOException e) {
-            SlaveBot.SLAVE_BOT_LOGGER.catching(e);
-        }
+    /**
+     * @return If the letters dir exists or contains letters
+     */
+    private boolean checkLetters(File lettersDir, File[] letters) {
+        return lettersDir.exists() || !ArrayHelper.isNullOrEmpty(letters);
     }
 
     @Override
     public String getUsage() {
-        return "Use \"!mail PERSON MESSAGE\" to leave them a message next time they are in the channel.\n" +
-                "Use \"!mail\" to check if there are any messages for you.\n" +
-                "Use \"!mail delete MESSAGE_UUID\" to delete a message.\n" +
-                "Use \"!mail delete all\" to delete all messages.";
+        return null;
     }
 
 }

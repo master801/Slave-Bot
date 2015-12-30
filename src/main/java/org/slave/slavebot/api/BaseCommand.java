@@ -9,6 +9,13 @@ import org.slave.slavebot.api.exception.CommandException;
  */
 public interface BaseCommand {
 
+    /**
+     * Initialize the command
+     *
+     * This is done before anything else
+     */
+    void init();
+
     boolean isNameCaseSensitive();
 
     /**
