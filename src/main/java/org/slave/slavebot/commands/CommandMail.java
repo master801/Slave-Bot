@@ -99,7 +99,7 @@ public final class CommandMail implements Command {
                                 }
                                 randomAccessFile.close();
                             } catch(IOException e) {
-                                SlaveBot.SLAVE_BOT_LOGGER.catching(e);
+                                SlaveBot.SLAVE_BOT_LOGGER.error("Caught an exception while attempting to verify a letter!", e);
                             }
 
                             letterFile.delete();
@@ -154,7 +154,7 @@ public final class CommandMail implements Command {
                             fileOutputStream.flush();
                             fileOutputStream.close();
                         } catch(IOException e) {
-                            SlaveBot.SLAVE_BOT_LOGGER.catching(e);
+                            SlaveBot.SLAVE_BOT_LOGGER.error("Caught an exception while writing a letter!", e);
                         }
                     }
 
@@ -211,11 +211,10 @@ public final class CommandMail implements Command {
                                     Letter letter = (Letter)objectInputStream.readObject();
                                     instance.sendMessage(senderNickName, String.format("Received letter \"%s\" from \"%s\".\nMessage: \"%s\"", letter.getUUID(), letter.getSender(), letter.getMessage()));
 
-
                                     objectInputStream.close();
                                     fileInputStream.close();
                                 } catch(IOException | ClassNotFoundException e) {
-                                    SlaveBot.SLAVE_BOT_LOGGER.catching(e);
+                                    SlaveBot.SLAVE_BOT_LOGGER.error("Caught an exception while reading a letter!", e);
                                 }
                                 break;
                             }

@@ -1,7 +1,5 @@
 package org.slave.slavebot;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jibble.pircbot.Colors;
 import org.jibble.pircbot.PircBot;
 import org.slave.lib.helpers.StringHelper;
@@ -12,6 +10,8 @@ import org.slave.slavebot.api.exception.CommandNotFoundException;
 import org.slave.slavebot.api.exception.IllegalCommandArgumentException;
 import org.slave.slavebot.api.exception.NoSubCommandsException;
 import org.slave.slavebot.api.exception.SubCommandNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by Master801 on 11/29/2015 at 7:14 AM.
@@ -20,7 +20,7 @@ import org.slave.slavebot.api.exception.SubCommandNotFoundException;
  */
 public final class SlaveBot extends PircBot implements Bot {
 
-    public static final Logger SLAVE_BOT_LOGGER = LogManager.getLogger("Slave-Bot");
+    public static final Logger SLAVE_BOT_LOGGER = LoggerFactory.getLogger("Slave-Bot");
 
     public SlaveBot() {
         setName(Settings.INSTANCE.getNick());

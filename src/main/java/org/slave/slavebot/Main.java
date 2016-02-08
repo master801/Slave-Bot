@@ -14,14 +14,14 @@ import java.io.IOException;
  */
 public final class Main {
 
-    public static final String VERSION = "1.0.0";
+    public static final String VERSION = "@VERSION@";
 
     public static void main(final String[] arguments) {
         try {
             Settings.INSTANCE.load();//Initialize settings before the bot
             ServerHandler.INSTANCE.load();
         } catch(IOException e) {
-            SlaveBot.SLAVE_BOT_LOGGER.catching(e);
+            SlaveBot.SLAVE_BOT_LOGGER.error("Caught an exception while initializing!", e);
             System.exit(-1);
             return;
         }
@@ -34,7 +34,7 @@ public final class Main {
 
             slaveBot.connect(serverName, serverPort, serverPassword);
         } catch(Exception e) {
-            SlaveBot.SLAVE_BOT_LOGGER.catching(e);
+            SlaveBot.SLAVE_BOT_LOGGER.error("Caught an exception while connecting!", e);
             System.exit(-1);
             return;
         }
@@ -52,7 +52,7 @@ public final class Main {
                 if (!StringHelper.isNullOrEmpty(channel.getPassword())) {
                     slaveBot.joinChannel(!channel.getName().startsWith("#") ? "#" + channel.getName() : channel.getName(), channel.getPassword());
                 } else {
-                    slaveBot.joinChannel(!channel.getName().startsWith("#") ? "#" + channel.getName() : channel.getName());
+                    slaveBot.joinChannel(!channel.getName().startsWith("#") ? "#" + channel.getName() : channel.getName(), null);
                 }
             }
         } else {

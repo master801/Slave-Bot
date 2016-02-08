@@ -22,10 +22,12 @@ idea {
 dependencies {
     compile group: 'org.ow2.asm', name: 'asm-debug-all', version: project.properties['asm-version']
     compile group: 'com.google.guava', name: 'guava', version: project.properties['guava-version']
-    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: project.properties['log4j-version']
-    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: project.properties['log4j-version']
     compile group: 'pircbot', name: 'pircbot', version: project.properties['pirc-version']
     compile group: 'com.googlecode.json-simple', name: 'json-simple', version: project.properties['json-version']
+    compile group: 'org.slf4j', name: 'slf4j-api', version: project.properties['slf4j-version']
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: project.properties['log4j-version']
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: project.properties['log4j-version']
+    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: project.properties['log4j-version']
 }
 
 task makeSourcesJar(type: Jar) {
