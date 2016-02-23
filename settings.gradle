@@ -1,0 +1,10 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.alexvasilkov' + ':' + 'gradle-vcs-dependency' + ':' + '0.2.6'
+    }
+}
+
+apply plugin: 'com.alexvasilkov.vcs-dependency'
