@@ -1,12 +1,17 @@
 package org.slave.slavebot.resources;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import org.slave.slavebot.SlaveBot;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 /**
  * Created by Master801 on 11/29/2015 at 11:39 AM.
@@ -20,7 +25,8 @@ public final class ServerHandler {
     private static final File SERVER_JSON_FILE = new File("servers.json");
     private final Object lock = new Object();
 
-    private Server server = null;
+    private Gson gson;
+    private Server server;
 
     private ServerHandler() {
     }
@@ -35,33 +41,13 @@ public final class ServerHandler {
                 System.exit(1);
                 return;
             }
-
-            JSONParser jsonParser = new JSONParser();
-            JSONObject serverJSON;
-
-            FileInputStream fileInputStream = new FileInputStream(ServerHandler.SERVER_JSON_FILE);
+            FileInputStream fileInputStream = new FileInputStream(SERVER_JSON_FILE);
             InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
-            try {
-                serverJSON = (JSONObject) jsonParser.parse(inputStreamReader);
-            } catch(ParseException e) {
-                SlaveBot.SLAVE_BOT_LOGGER.error("Couldn't parse server JSON file!");
-                return;
-            }
+            JsonReader jsonReader = getGson().newJsonReader(inputStreamReader);
 
-            if (serverJSON != null) {
-                server = new Server((String) serverJSON.get("name"), (int) ((long) serverJSON.get("port")), (String) serverJSON.get("password"));
+            server = getGson().fromJson(jsonReader, Server.class);
 
-                JSONArray channels = (JSONArray) serverJSON.get("channels");
-                for(Object channelObject : channels) {
-                    JSONObject channel = (JSONObject) channelObject;
-
-                    String channelName = (String) channel.get("name");
-                    String channelPassword = (String) channel.get("password");
-                    if (!channelName.startsWith("#")) channelName = "#" + channelName;
-                    server.addChannel(channelName, channelPassword);
-                }
-            }
-
+            jsonReader.close();
             inputStreamReader.close();
             fileInputStream.close();
         }
@@ -70,28 +56,58 @@ public final class ServerHandler {
     @SuppressWarnings("unchecked")
     private void createDefault() throws IOException {
         synchronized(lock) {
-            JSONObject serverJSON = new JSONObject();
-            serverJSON.put("name", "");
-            serverJSON.put("port", 0);
-            serverJSON.put("password", "");
+            Channel channel1 = new Channel("#dummy_channel_1", "");
+            Channel channel2 = new Channel("#dummy_channel_2", "");
 
-            JSONArray channels = new JSONArray();
+            Server server = new Server("", 0, "");
+            server.addChannel(channel1);
+            server.addChannel(channel2);
 
-            JSONObject dummyChannel1 = new JSONObject();
-            dummyChannel1.put("name", "#dummy_channel_1");
-            dummyChannel1.put("password", "");
-            channels.add(dummyChannel1);
+            FileOutputStream fileOutputStream = new FileOutputStream(ServerHandler.SERVER_JSON_FILE);
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
+            JsonWriter jsonWriter = getGson().newJsonWriter(outputStreamWriter);
 
-            JSONObject dummyChannel2 = new JSONObject();
-            dummyChannel2.put("name", "#dummy_channel_2");
-            dummyChannel2.put("password", "");
-            channels.add(dummyChannel2);
+            getGson().toJson(
+                server,
+                Server.class,
+                jsonWriter
+            );
 
-            serverJSON.put("channels", channels);
+            jsonWriter.flush();
+            jsonWriter.close();
+            outputStreamWriter.flush();
+            outputStreamWriter.close();
+            fileOutputStream.flush();
+            fileOutputStream.close();
+        }
+    }
 
-            FileWriter fileWriter = new FileWriter(ServerHandler.SERVER_JSON_FILE);
-            serverJSON.writeJSONString(fileWriter);
-            fileWriter.close();
+    private Gson getGson() {
+        synchronized(lock)  {
+            if (gson == null) {
+                GsonBuilder gsonBuilder = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting();
+
+                gsonBuilder.registerTypeAdapter(
+                    Server.class,
+                    Server.ServerJson.ServerJsonSerializer.class
+                );
+                gsonBuilder.registerTypeAdapter(
+                    Server.class,
+                    Server.ServerJson.ServerJsonDeserializer.class
+                );
+
+                gsonBuilder.registerTypeAdapter(
+                    Channel.class,
+                    Channel.ChannelJson.ChannelJsonSerializer.class
+                );
+                gsonBuilder.registerTypeAdapter(
+                    Channel.class,
+                    Channel.ChannelJson.ChannelJsonDeserializer.class
+                );
+
+                gson = gsonBuilder.create();
+            }
+            return gson;
         }
     }
 

@@ -47,7 +47,7 @@ public final class CommandAbout implements Command {
     }
 
     @Override
-    public void doCommand(Bot instance, final String channel, final String senderNickName, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
+    public void doCommand(final Bot instance, final String channel, final String senderNickName, final String hostname, final String completeLine, final String[] parameters) throws CommandException {
         final String description = "I am a bot created by Master 801 with PircBot. I have very little functionality, so please refrain from talking to me.";
         if (channel == null || senderNickName == null || hostname == null) {
             SlaveBot.SLAVE_BOT_LOGGER.info(description);

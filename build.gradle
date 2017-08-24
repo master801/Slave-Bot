@@ -1,9 +1,27 @@
+buildscript {
+    repositories {
+        maven {
+            url 'https://plugins.gradle.org/m2/'
+        }
+    }
+    dependencies {
+        classpath(
+                group: 'io.franzbecker',
+                name: 'gradle-lombok',
+                version: '1.8'
+        )
+    }
+}
 repositories {
     mavenCentral()
+    maven {
+        url = project.properties['artifactory_contextUrl'] + '/gradle-dev-local'
+    }
 }
 
 apply plugin: 'java'
 apply plugin: 'idea'
+apply plugin: 'io.franzbecker.gradle-lombok'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -18,20 +36,68 @@ idea {
     }
 }
 
-def vcs() {
-	git name: 'slave-lib',
-		url: 'https://github.com/master801/slave-lib',
-		commit: 'master'
-}
-
 dependencies {
-    compile group: 'com.google.guava', name: 'guava', version: project.properties['guava-version']
-    compile group: 'org.slf4j', name: 'slf4j-api', version: project.properties['slf4j-version']
-    compile group: 'pircbot', name: 'pircbot', version: project.properties['pirc-version']
-    compile group: 'com.googlecode.json-simple', name: 'json-simple', version: project.properties['json-version']
-    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: project.properties['log4j-version']
-    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: project.properties['log4j-version']
-    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: project.properties['log4j-version']
+    compile(
+            group: 'org.slave.lib',
+            name: 'lib',
+            version: project.properties['slave-lib-version']
+    )
+    compile(
+            group: 'org.slave.lib',
+            name: 'io',
+            version: project.properties['slave-lib-version']
+    )
+    compile(
+            group: 'org.slave.lib',
+            name: 'config',
+            version: project.properties['slave-lib-version']
+    )
+    compile(
+            group: 'org.slave.lib',
+            name: 'log',
+            version: project.properties['slave-lib-version']
+    )
+
+    compile(
+            group: 'commons-io',
+            name: 'commons-io',
+            version: project.properties['commons-io-version']
+    )
+    compile(
+            group: 'com.google.guava',
+            name: 'guava',
+            version: project.properties['guava-version']
+    )
+    compile(
+            group: 'com.google.code.gson',
+            name: 'gson',
+            version: project.properties['gson-version']
+    )
+    compile(
+            group: 'pircbot',
+            name: 'pircbot',
+            version: project.properties['pirc-version']
+    )
+    compile(
+            group: 'org.slf4j',
+            name: 'slf4j-api',
+            version: project.properties['slf4j-version']
+    )
+    compile(
+            group: 'org.apache.logging.log4j',
+            name: 'log4j-api',
+            version: project.properties['log4j-version']
+    )
+    compile(
+            group: 'org.apache.logging.log4j',
+            name: 'log4j-core',
+            version: project.properties['log4j-version']
+    )
+    compile(
+            group: 'org.apache.logging.log4j',
+            name: 'log4j-slf4j-impl',
+            version: project.properties['log4j-version']
+    )
 }
 
 task makeSourcesJar(type: Jar) {
