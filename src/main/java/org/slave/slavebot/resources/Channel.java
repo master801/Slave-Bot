@@ -8,6 +8,9 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.slave.lib.api.Copyable;
 
 import java.io.Serializable;
@@ -18,28 +21,26 @@ import java.lang.reflect.Type;
  *
  * @author Master801
  */
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 public final class Channel implements Serializable, Copyable<Channel> {
 
     private static final long serialVersionUID = -8996446332888283100L;
 
+    @Getter
     private final String name, password;
-
-    Channel(final String name, final String password) {
-        this.name = name;
-        this.password = password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
 
     @Override
     public Channel copy() {
-        return new Channel(name, password);
+        return new Channel(name, password);//Strings are immutable, no need to directly copy them
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj instanceof Channel) {
+            Channel channel = (Channel)obj;
+            return channel.getName().equals(name) && channel.getPassword().equals(getPassword());
+        }
+        return false;
     }
 
     public static final class ChannelJson {

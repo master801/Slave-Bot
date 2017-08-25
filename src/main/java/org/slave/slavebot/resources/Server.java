@@ -1,5 +1,6 @@
 package org.slave.slavebot.resources;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -10,6 +11,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import lombok.Getter;
 import org.slave.lib.helpers.IterableHelper;
 
 import java.io.Serializable;
@@ -25,8 +27,12 @@ public final class Server implements Serializable {
 
     private static final long serialVersionUID = 4064671318681946206L;
 
+    @Getter
     private final String name, password;
+
+    @Getter
     private final int port;
+
     private List<Channel> channels;
 
     public Server(final String name, final int port, final String password) {
@@ -36,12 +42,8 @@ public final class Server implements Serializable {
     }
 
     private Server(final String name, final int port, final String password, final List<Channel> channels) {
-        this.name = name;
-        this.port = port;
-        this.password = password;
-
-        this.channels.clear();
-        this.channels.addAll(channels);
+        this(name, port, password);
+        this.channels = ImmutableList.copyOf(channels);
     }
 
     public void addChannel(final Channel channel) {
@@ -61,20 +63,8 @@ public final class Server implements Serializable {
         return channels.contains(channel);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public Channel[] getChannels() {
-        return channels.toArray(new Channel[channels.size()]);
+    public ImmutableList<Channel> getChannels() {
+        return ImmutableList.copyOf(channels);
     }
 
     public static final class ServerJson {
