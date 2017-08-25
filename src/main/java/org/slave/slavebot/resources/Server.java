@@ -11,10 +11,13 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.slave.lib.helpers.IterableHelper;
 
-import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -23,10 +26,10 @@ import java.util.List;
  *
  * @author Master801
  */
-public final class Server implements Serializable {
+@RequiredArgsConstructor(access = AccessLevel.PUBLIC)
+public final class Server {
 
-    private static final long serialVersionUID = 4064671318681946206L;
-
+    @NonNull
     @Getter
     private final String name, password;
 
@@ -35,14 +38,8 @@ public final class Server implements Serializable {
 
     private List<Channel> channels;
 
-    public Server(final String name, final int port, final String password) {
-        this.name = name;
-        this.port = port;
-        this.password = password;
-    }
-
-    private Server(final String name, final int port, final String password, final List<Channel> channels) {
-        this(name, port, password);
+    private Server(final String name, final String password, final int port, final List<Channel> channels) {//internal constructor for deserializer
+        this(name, password, port);
         this.channels = ImmutableList.copyOf(channels);
     }
 
@@ -67,15 +64,13 @@ public final class Server implements Serializable {
         return ImmutableList.copyOf(channels);
     }
 
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class ServerJson {
 
         static final String PROPERTY_NAME = "name";
         static final String PROPERTY_PORT = "port";
         static final String PROPERTY_PASSWORD = "password";
         static final String PROPERTY_CHANNELS = "channels";
-
-        private ServerJson() {
-        }
 
         public static final class ServerJsonSerializer implements JsonSerializer<Server> {
 
@@ -148,8 +143,8 @@ public final class Server implements Serializable {
 
                     return new Server(
                         name,
-                        port,
                         password,
+                        port,
                         channels
                     );
                 }

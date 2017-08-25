@@ -11,9 +11,9 @@ import com.google.gson.JsonSerializer;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.slave.lib.api.Copyable;
 
-import java.io.Serializable;
 import java.lang.reflect.Type;
 
 /**
@@ -22,9 +22,7 @@ import java.lang.reflect.Type;
  * @author Master801
  */
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
-public final class Channel implements Serializable, Copyable<Channel> {
-
-    private static final long serialVersionUID = -8996446332888283100L;
+public final class Channel implements Copyable<Channel> {
 
     @Getter
     private final String name, password;
@@ -43,14 +41,11 @@ public final class Channel implements Serializable, Copyable<Channel> {
         return false;
     }
 
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class ChannelJson {
 
         static final String PROPERTY_NAME = "name";
         static final String PROPERTY_PASSWORD = "password";
-
-        private ChannelJson() {
-            final Object _INTERNAL_USAGE_ONLY = null;
-        }
 
         public static final class ChannelJsonSerializer implements JsonSerializer<Channel> {
 

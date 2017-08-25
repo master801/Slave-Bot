@@ -2,6 +2,8 @@ package org.slave.slavebot;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.slave.slavebot.resources.Channel;
 import org.slave.slavebot.resources.Server;
 import org.slave.slavebot.resources.ServerHandler;
@@ -13,16 +15,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author Master801
  */
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
 public final class SlaveBot {
 
     public static final Logger SLAVE_BOT_LOGGER = LoggerFactory.getLogger("Slave-Bot");
 
     private Gson gson;
+    private ThreadExecutor threadExecutor;
     private ServerHandler serverHandler;
-
-    SlaveBot() {
-        final Object _INTERNAL_USAGE_ONLY = null;
-    }
 
     public void init() throws Exception {
         serverHandler = new ServerHandler(getGson());
@@ -57,6 +57,11 @@ public final class SlaveBot {
             gson = gsonBuilder.create();
         }
         return gson;
+    }
+
+    public ThreadExecutor getThreadExecutor() {
+        if (threadExecutor == null) threadExecutor = new ThreadExecutor();
+        return threadExecutor;
     }
 
 }
