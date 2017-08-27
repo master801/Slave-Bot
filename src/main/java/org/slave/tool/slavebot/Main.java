@@ -1,4 +1,4 @@
-package org.slave.slavebot;
+package org.slave.tool.slavebot;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

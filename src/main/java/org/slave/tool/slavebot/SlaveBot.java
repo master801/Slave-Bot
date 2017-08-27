@@ -1,12 +1,12 @@
-package org.slave.slavebot;
+package org.slave.tool.slavebot;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.slave.slavebot.resources.Channel;
-import org.slave.slavebot.resources.Server;
-import org.slave.slavebot.resources.ServerHandler;
+import org.slave.tool.slavebot.resources.Channel;
+import org.slave.tool.slavebot.resources.Server;
+import org.slave.tool.slavebot.resources.ServerHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

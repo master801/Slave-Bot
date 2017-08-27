@@ -1,4 +1,4 @@
-package org.slave.slavebot.resources;
+package org.slave.tool.slavebot.resources;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slave.lib.helpers.FileHelper;
-import org.slave.slavebot.SlaveBot;
+import org.slave.tool.slavebot.SlaveBot;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -1,4 +1,4 @@
-package org.slave.slavebot.resources;
+package org.slave.tool.slavebot.resources;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;

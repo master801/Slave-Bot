@@ -1,4 +1,4 @@
-package org.slave.slavebot.resources;
+package org.slave.tool.slavebot.resources;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
